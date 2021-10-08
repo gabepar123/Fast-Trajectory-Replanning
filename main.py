@@ -1,6 +1,21 @@
 from maze import *
+from binary_heap import *
 
-
-maze = Maze()
-maze.create_maze_dfs()
-print(maze.print_maze())
+h = Heap()
+h.insert(11)
+h.insert(15)
+h.insert(1230)
+h.insert(12)
+print(h.delete())
+h.print()
+print(h.delete())
+h.print()
+print(h.delete())
+h.print()
+print(h.delete())
+h.print()
+h.insert(11)
+h.insert(15)
+h.insert(1230)
+h.insert(12)
+h.print()
