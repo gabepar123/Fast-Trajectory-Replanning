@@ -1,6 +1,5 @@
 from maze import *
 from binary_heap import *
+import repeated_forward_astar
 
-maze = Maze()
-maze.create_maze_dfs()
-maze.print_maze()
+repeated_forward_astar.main()

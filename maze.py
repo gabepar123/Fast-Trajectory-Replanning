@@ -10,6 +10,10 @@ class Cell:
     f = 0
     h = 0
     g = 0
+    x_pos = 0
+    y_pos = 0
+    search = 0
+    pointer = None
     
     #THIS IS ONLY FOR PRINTING THE MAZE
     print_char = "-"
@@ -20,13 +24,14 @@ class Cell:
         self.g = g
         self.is_blocked = is_blocked
 
+
 #
 # Creates a maze using a 2D Array of the Cell class
 #   
 #
 class Maze:
 
-    MAZE_SIZE = 101 # Change this to change maze dimensions
+    MAZE_SIZE = 10 # Change this to change maze dimensions
     maze = [[]]
 
     # Default goal pos = [100][100]
@@ -38,8 +43,14 @@ class Maze:
     
 
     def __init__(self):
-        
         self.maze = [[Cell(0,0,0,False) for j in range(self.MAZE_SIZE)] for i in range(self.MAZE_SIZE)]
+        #sets x and y positions of each cell object
+        for i, row in enumerate(self.maze):
+            for j, col in enumerate(row):
+                col.x_pos = i
+                col.y_pos = j
+                
+                
 
     def print_maze(self):
         for row in self.maze:
