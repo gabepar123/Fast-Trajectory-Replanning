@@ -30,9 +30,11 @@ class Maze:
     maze = [[]]
 
     # Default goal pos = [100][100]
-    GOAL = [MAZE_SIZE - 1, MAZE_SIZE - 1]
+    GOAL_X = MAZE_SIZE - 1
+    GOAL_Y = MAZE_SIZE - 1
     #Agent starting pos = [0][0]
-    agent_pos = [0, 0]
+    agent_pos_x = 0
+    agent_pos_y = 0
     
 
     def __init__(self):
@@ -57,9 +59,9 @@ class Maze:
         
         # make sure to never block the goal or initial position
         visited = [[False for j in range(self.MAZE_SIZE)] for i in range(self.MAZE_SIZE)]
-        visited[0][0] = visited[self.MAZE_SIZE - 1][self.MAZE_SIZE - 1] = True
-        self.maze[0][0].print_char = "A"
-        self.maze[self.MAZE_SIZE - 1][self.MAZE_SIZE - 1].print_char = "G"
+        visited[self.agent_pos_x][self.agent_pos_y] = visited[self.GOAL_X][self.GOAL_Y] = True
+        self.maze[self.agent_pos_x][self.agent_pos_y].print_char = "A"
+        self.maze[self.GOAL_X][self.GOAL_Y].print_char = "G"
 
         row = start_row = random.randint(1, self.MAZE_SIZE - 2)
         row = start_col = random.randint(1, self.MAZE_SIZE - 2)
