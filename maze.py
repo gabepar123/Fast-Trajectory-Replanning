@@ -10,6 +10,7 @@ class Cell:
     f = 0
     h = 0
     g = 0
+    cost = 1
     x_pos = 0
     y_pos = 0
     search = 0
@@ -31,7 +32,7 @@ class Cell:
 #
 class Maze:
 
-    MAZE_SIZE = 10 # Change this to change maze dimensions
+    MAZE_SIZE = 5 # Change this to change maze dimensions
     maze = [[]]
 
     # Default goal pos = [100][100]
@@ -101,5 +102,5 @@ class Maze:
                 st.append([row, col - 1])
                 
             else:
-                self.maze[row][col].is_blocked == True
+                self.maze[row][col].is_blocked = True
                 self.maze[row][col].print_char = "█"

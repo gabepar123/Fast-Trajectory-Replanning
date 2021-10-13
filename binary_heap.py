@@ -3,18 +3,19 @@
 #
 class Heap:
 
-    heap = []
+    def __init__(self):
+        self.heap = []
 
     def __siftUp(self):
         curr = len(self.heap) - 1
         while curr > 0:
             p = (curr - 1)//2
-            data = self.heap[curr].f
-            parent = self.heap[p].f
-            if data < parent:
+            data = self.heap[curr]
+            parent = self.heap[p]
+            if data.f < parent.f:
                 temp = parent
-                self.heap[p].f = data
-                self.heap[curr].f = parent
+                self.heap[p] = data
+                self.heap[curr] = parent
                 curr = p
             else:
                 break
@@ -46,9 +47,9 @@ class Heap:
                 if self.heap[i].f < self.heap[k].f:
                     max += 1
             if (self.heap[j].f > self.heap[max].f):
-                temp = self.heap[j].f
-                self.heap[j].f = self.heap[max].f
-                self.heap[max].f = temp
+                temp = self.heap[j]
+                self.heap[j] = self.heap[max]
+                self.heap[max] = temp
                 j = max
                 k = 2 * j + 1
             else:
@@ -60,7 +61,7 @@ class Heap:
         for cell in self.heap:
             if cell == x:
                 item = cell
-        if item == None:
+        if item is None:
             return False
 
         temp = self.heap[0] 
@@ -73,8 +74,12 @@ class Heap:
     def size(self):
         return len(self.heap)
 
+    #peek returns F value of min node
     def peek(self):
         return self.heap[0].f
     
     def print(self):
-        print(self.heap)
+        print("[", end="")
+        for cell in self.heap:
+            print(cell.f, end=",")
+        print("]")

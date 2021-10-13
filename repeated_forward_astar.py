@@ -1,50 +1,46 @@
 from binary_heap import *
 from maze import *
 import math
+import random
 
 m = Maze()
 m.create_maze_dfs()
 m.print_maze()
 
-found_blocked = False #used for tracing tree pointers
-start_cell = None
-action_cost = 1
-
 def compute_path(start_cell, goal_cell, open, closed, counter, action_cost):
     while goal_cell.g > open.peek():
-        curr_cell = open.delete()
+        curr_cell = tie_break(open)
         closed.add(curr_cell)
         neighbors = find_valid_neighbors(curr_cell, closed)
+        #print(len(neighbors))
         for succ in neighbors:
             if succ.search < counter:
                 succ.g = math.inf #Infinity
                 succ.search = counter
-            if succ.g > curr_cell.g + action_cost: #TODO: check
-                succ.g = curr_cell.g + action_cost
+            if succ.g > curr_cell.g + curr_cell.cost: #TODO: check
+                succ.g = curr_cell.g + curr_cell.cost
 
                 succ.pointer = curr_cell #Update tree pointer
 
+                open.deleteItem(succ)
+
                 succ.h = compute_h_value(succ)
                 succ.f = succ.g + succ.h
-                open.deleteItem(succ)
                 open.insert(succ)
     
     
 
 def main():
-    global found_blocked
-    global start_cell
-    global action_cost #TODO: update this when needed
 
     counter = 0
+    action_cost = 1 #TODO: update this when needed
 
     start_x = m.agent_pos_x
     start_y = m.agent_pos_y
     start_cell = m.maze[start_x][start_y] # holds Cell object of current maze index
     goal_cell = m.maze[m.GOAL_X][m.GOAL_Y]  #holds Cell object of GOAL maze index
 
-    while start_cell != goal_cell:
-        print("here")
+    while start_cell is not goal_cell:
         counter += 1
 
         start_cell.g = 0  # initial g value
@@ -57,21 +53,32 @@ def main():
 
         start_cell.h = compute_h_value(start_cell)
         start_cell.f = start_cell.g + start_cell.h #f value
-
         open.insert(start_cell)
+        
         compute_path(start_cell, goal_cell, open, closed, counter, action_cost)
+        
         if open.size() == 0:
             print("Cannot reach Target!")
             return
 
+        tree_pointer = goal_cell
+        backtrack = [] #Saves the Cells the tree pointers follow, used to update Agent's location
+        while tree_pointer is not start_cell is not None: #Follow pointers from goal -> start
+            backtrack.append(tree_pointer)
+            tree_pointer = tree_pointer.pointer
         
-        backtrack_tree_pointer(goal_cell) #Follow pointers from goal -> start
-        #tree pointers
-        #set start state
-        #update cost
+        backtrack.reverse() #Reverse list to follow it from start -> goal
+        for cell in backtrack: #Update agent state until we hit a blocked cell
+            if cell.is_blocked:
+                action_cost += 1
+                cell.cost += action_cost
+                break
+            #print([cell.x_pos, cell.y_pos])
+            start_cell = cell
+        #print([start_cell.x_pos, start_cell.y_pos])
     print("Target reached!")
-    print([start_cell.x_pos, start_cell.y_pos])
-    print([goal_cell.x_pos, goal_cell.y_pos])
+    #print([start_cell.x_pos, start_cell.y_pos])
+    #print([goal_cell.x_pos, goal_cell.y_pos])
 
 def compute_h_value(cell):
     return abs(cell.x_pos - m.GOAL_X) + abs(cell.y_pos - m.GOAL_Y)
@@ -92,21 +99,38 @@ def find_valid_neighbors(curr_cell, closed):
                     neighbors.append(m.maze[row][col])
     return neighbors
     
-    #TODO: this function is probably off by one
-def backtrack_tree_pointer(p):
-    global found_blocked
-    global start_cell
-    global action_cost
-
-    if p == None or found_blocked:
-        return
-
-    backtrack_tree_pointer(p.pointer)
-
-    if p.is_blocked:
-        found_blocked = True
-        action_cost += 1
-        return
-    start_cell = p
+#This code in crazy
+# Essentially tie breaks values with the same f values
+# Selects based on SMALLEST g value
+# if cells have the same G values, break tie RANDOMLY
+def tie_break(open):
+    min = open.delete()
+    if open.size() == 0:
+        return min
     
+    f_list = []
+    f_list.append(min)
+    #print(open.size())
+    while min.f == open.peek():
+        f_list.append(open.delete())
+        if (open.size() == 0):
+            break
+
+    min_g_cell = f_list[0]
+    for cell in f_list:
+        if min_g_cell.g > cell.g:
+            min_g_cell = cell
+
+    for cell in f_list:
+        if cell.g != min_g_cell.g:
+            open.insert(cell)
+            f_list.remove(cell)
+
+    retcell = random.choice(f_list)
+    f_list.remove(retcell)
+
+    for cell in f_list:
+        open.insert(cell)
+    #open.print()
+    return retcell
 
