@@ -3,27 +3,19 @@ import random
 
 class Cell:
 
-    #determines if the cell is blocked or not
-    is_blocked = False
-    #represents a states f/h/g values for A*
-    # f(n) = h(n) + g(n)
-    f = 0
-    h = 0
-    g = 0
-    cost = 1
-    x_pos = 0
-    y_pos = 0
-    search = 0
-    pointer = None
-    
-    #THIS IS ONLY FOR PRINTING THE MAZE
-    print_char = "-"
-
     def __init__(self, f, h, g, is_blocked):
+        #represents a states f/h/g values for A*
+        # f(n) = h(n) + g(n)
         self.f = f
         self.h = h
         self.g = g
-        self.is_blocked = is_blocked
+        self.is_blocked = is_blocked  #determines if the cell is blocked or not
+        self.cost = 1
+        self.x_pos = 0
+        self.y_pos = 0
+        self.search = 0
+        self.pointer = None
+        self.print_char = "-" #THIS IS ONLY FOR PRINTING THE MAZE
 
 
 #
@@ -32,25 +24,26 @@ class Cell:
 #
 class Maze:
 
-    MAZE_SIZE = 5 # Change this to change maze dimensions
-    maze = [[]]
-
-    # Default goal pos = [100][100]
-    GOAL_X = MAZE_SIZE - 1
-    GOAL_Y = MAZE_SIZE - 1
-    #Agent starting pos = [0][0]
-    agent_pos_x = 0
-    agent_pos_y = 0
     
-
     def __init__(self):
+
+        self.MAZE_SIZE = 101 # Change this to change maze dimensions
+
         self.maze = [[Cell(0,0,0,False) for j in range(self.MAZE_SIZE)] for i in range(self.MAZE_SIZE)]
         #sets x and y positions of each cell object
         for i, row in enumerate(self.maze):
             for j, col in enumerate(row):
                 col.x_pos = i
                 col.y_pos = j
-                
+
+        
+        # Default goal pos = [100][100]
+        self.GOAL_X = self.MAZE_SIZE - 1
+        self.GOAL_Y = self.MAZE_SIZE - 1
+        #Agent starting pos = [0][0]
+        self.agent_pos_x = 0
+        self.agent_pos_y = 0
+                    
                 
 
     def print_maze(self):
@@ -68,7 +61,6 @@ class Maze:
     # "G" is the goal index
 
     def create_maze_dfs(self):
-        
         # make sure to never block the goal or initial position
         visited = [[False for j in range(self.MAZE_SIZE)] for i in range(self.MAZE_SIZE)]
         visited[self.agent_pos_x][self.agent_pos_y] = visited[self.GOAL_X][self.GOAL_Y] = True
