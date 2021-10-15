@@ -52,6 +52,23 @@ class Maze:
             for col in row:
                 print(col.print_char, end = "")
             print("]")
+    
+    def print_final_maze(self, path):
+        # e = expanded
+        #for cell in closed:
+        #    if cell.x_pos != self.agent_pos_x and cellx.y_pos != self.agent_pos_y and cell.x_pos != self.GOAL_X and cell.ypos != self.GOAL_Y:
+        #        self.maze[cell.x_pos][cell.y_pos].print_char = "E"
+        
+        # x = path
+        for cell in path:
+            if (cell.x_pos != self.agent_pos_x and cell.y_pos != self.agent_pos_y) or (cell.x_pos != self.GOAL_X and cell.y_pos != self.GOAL_Y):
+                self.maze[cell.x_pos][cell.y_pos].print_char = "x"
+        
+        self.maze[self.agent_pos_x][self.agent_pos_y].print_char = "A"
+        self.maze[self.GOAL_X][self.GOAL_Y].print_char = "G"
+
+        self.print_maze()
+        print("Path length: %d", len(path))
 
     #
     # Creates grid world using stack DFS

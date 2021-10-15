@@ -4,7 +4,7 @@ import math
 import random
 import time
 
-class repeated_forward_astar():
+class repeated_backwards_astar():
 
      
     def __init__(self, use_small_g):
@@ -18,8 +18,8 @@ class repeated_forward_astar():
     def new_maze(self):
         self.m = self.m.create_maze_dfs()
 
-    def compute_path(self, goal_cell, open, counter):
-        while goal_cell.g > open.peek():
+    def compute_path(self, start_cell, open, counter):
+        while start_cell.g > open.peek():
             curr_cell = open.delete()
             self.closed.add(curr_cell)
 
@@ -35,7 +35,7 @@ class repeated_forward_astar():
 
                     open.deleteItem(succ)
 
-                    succ.h = self.compute_h_value(succ)
+                    succ.h = self.compute_h_value(succ, start_cell)
                     succ.f = succ.g + succ.h
                     open.insert(succ)
             if open.size() == 0: return
@@ -55,45 +55,53 @@ class repeated_forward_astar():
         while start_cell is not goal_cell:
             counter += 1
 
-            start_cell.g = 0  # initial g value
-            start_cell.search = counter
-            goal_cell.g = math.inf # GOAl G value
+            goal_cell.g = 0  # initial g value
             goal_cell.search = counter
+            start_cell.g = math.inf # GOAl G value
+            start_cell.search = counter
 
             open = Heap(self.use_small_g)
             self.cells_expanded += len(self.closed) 
             self.closed = set() #set() = hashSet O(1) search
 
-            start_cell.h = self.compute_h_value(start_cell)
-            start_cell.f = start_cell.g + start_cell.h #f value
-            open.insert(start_cell)
+            goal_cell.h = self.compute_h_value(goal_cell, start_cell)
+            goal_cell.f = goal_cell.g + goal_cell.h #f value
+            open.insert(goal_cell)
             
-            self.compute_path(goal_cell, open, counter)
+            self.compute_path(start_cell, open, counter)
             
             if open.size() == 0:
                 #print("Cannot reach Target!")
                 return (time.time() - time_start), self.cells_expanded
 
-            tree_pointer = goal_cell
-            backtrack = [] #Saves the Cells the tree pointers follow, used to update Agent's location
-            while tree_pointer is not start_cell: #Follow pointers from goal -> start
-                backtrack.append(tree_pointer)
+            tree_pointer = start_cell
+            while tree_pointer is not goal_cell:
                 tree_pointer = tree_pointer.pointer
-            
-            backtrack.reverse() #Reverse list to follow it from start -> goal
-            for cell in backtrack: #Update agent state until we hit a blocked cell
-                if cell.is_blocked:
-                    #action_cost += 1
-                    cell.cost = math.inf
+                if tree_pointer.is_blocked:
+                    tree_pointer.cost = math.inf
                     break
-                start_cell = cell
+                start_cell = tree_pointer
+                #update h value maybe
+            #tree_pointer = goal_cell
+            #backtrack = [] #Saves the Cells the tree pointers follow, used to update Agent's location
+            #while tree_pointer is not start_cell: #Follow pointers from goal -> start
+            #    backtrack.append(tree_pointer)
+            #    tree_pointer = tree_pointer.pointer
+            #
+            #backtrack.reverse() #Reverse list to follow it from start -> goal
+            #for cell in backtrack: #Update agent state until we hit a blocked cell
+            #    if cell.is_blocked:
+            #        #action_cost += 1
+            #        cell.cost = math.inf
+            #        break
+            #    start_cell = cell
         #print("Target reached!")
         return (time.time() - time_start), self.cells_expanded
 
 
 
-    def compute_h_value(self, cell):
-        return abs(cell.x_pos - self.m.GOAL_X) + abs(cell.y_pos - self.m.GOAL_Y)
+    def compute_h_value(self, cell, start_cell):
+        return abs(cell.x_pos - start_cell.x_pos) + abs(cell.y_pos - start_cell.y_pos)
 
 
     # adds all neighbors that havent been expanded yet (closed list)

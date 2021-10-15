@@ -108,3 +108,5 @@ class Heap:
         for cell in self.heap:
             print([cell.f, cell.g], end=",")
         print("]")
+    
+   
