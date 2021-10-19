@@ -1,6 +1,5 @@
 import random
 
-
 class Cell:
 
     def __init__(self, f, h, g, is_blocked):
@@ -45,7 +44,6 @@ class Maze:
         self.agent_pos_y = 0
                     
                 
-
     def print_maze(self):
         for row in self.maze:
             print("[", end ="")
@@ -54,13 +52,10 @@ class Maze:
             print("]")
     
     def print_final_maze(self, path):
-        # e = expanded
-        #for cell in closed:
-        #    if cell.x_pos != self.agent_pos_x and cellx.y_pos != self.agent_pos_y and cell.x_pos != self.GOAL_X and cell.ypos != self.GOAL_Y:
-        #        self.maze[cell.x_pos][cell.y_pos].print_char = "E"
         
-        # x = path
         for cell in path:
+            if cell.is_blocked: raise IndexError("Blocked Cell in Final Path!")
+
             if (cell.x_pos != self.agent_pos_x and cell.y_pos != self.agent_pos_y) or (cell.x_pos != self.GOAL_X and cell.y_pos != self.GOAL_Y):
                 self.maze[cell.x_pos][cell.y_pos].print_char = "x"
         
@@ -68,9 +63,33 @@ class Maze:
         self.maze[self.GOAL_X][self.GOAL_Y].print_char = "G"
 
         self.print_maze()
-        print("Path length: %d", len(path))
+        print("Path length: %d" % len(path))
 
-    #
+
+    def create_maze_from_file(self, file_index):
+        file_name = file_name = "grid_worlds/" + str(file_index) + ".txt"
+        f = open(file_name, "r")
+        for i, row in enumerate(self.maze):
+            for j, cell in enumerate(row):
+                c = f.read(1)
+                if c == "\n":
+                    c = f.read(1)
+                if c == "█":
+                    cell.is_blocked = True
+                    cell.print_char = "█"
+                elif c == "-":
+                    cell.print_char = "-"
+                elif c == "A":
+                    self.agent_pos_x = i
+                    self.agent_pos_y = j
+                    cell.print_char = "A"
+                elif c == "G":
+                    self.GOAL_X = i
+                    self.GOAL_Y = j
+                    cell.print_char = "G"
+
+
+    # UNUSED:
     # Creates grid world using stack DFS
     # Marking the index as "-" corresponds to UNBLOCKED, only for printing
     # Marking the index as "█" corresponds to BLOCKED, only for printing
@@ -113,3 +132,19 @@ class Maze:
             else:
                 self.maze[row][col].is_blocked = True
                 self.maze[row][col].print_char = "█"
+
+        #clear out area near goal and agent to reduce chance of it being closed off
+        for i in range(0,10):
+            for j in range(1,10):
+                self.maze[i][j].is_blocked = False
+                self.maze[i][j].print_char = "-"
+        for i in range(85,100):
+            for j in range(85,100):
+                self.maze[i][j].is_blocked = False
+                self.maze[i][j].print_char = "-"
+
+
+    
+
+
+

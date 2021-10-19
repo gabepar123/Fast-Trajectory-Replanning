@@ -4,8 +4,9 @@ import math
 import random
 import time
 
-class repeated_forward_astar():
+class adaptive_astar():
 
+     
     def __init__(self, use_small_g, visualize, print_status, file_index):
         self.use_small_g = use_small_g
         self.visualize = visualize
@@ -15,8 +16,7 @@ class repeated_forward_astar():
         self.cells_expanded = 0
         self.closed = set()
         self.final_path = []
-
-
+    
     def print_final_path(self):
         self.m.print_final_maze(self.final_path)
 
@@ -71,6 +71,11 @@ class repeated_forward_astar():
             open.insert(start_cell)
             
             self.compute_path(goal_cell, open, counter)
+
+            for cell in self.closed:
+                cell.h = goal_cell.g - cell.h #adaptive a*
+                cell.f = cell.g + cell.h
+            
             
             if open.size() == 0:
                 if self.print_status:
@@ -82,7 +87,7 @@ class repeated_forward_astar():
             while tree_pointer is not start_cell: #Follow pointers from goal -> start
                 backtrack.append(tree_pointer)
                 tree_pointer = tree_pointer.pointer
-            
+
             
 
             backtrack.reverse() #Reverse list to follow it from start -> goal
@@ -92,7 +97,7 @@ class repeated_forward_astar():
                     break
                 start_cell = cell
                 self.final_path.append(start_cell)
-                
+
         if self.print_status:
             print("Target reached!")
         return (time.time() - time_start), self.cells_expanded

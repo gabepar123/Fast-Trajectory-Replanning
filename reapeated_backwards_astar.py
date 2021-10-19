@@ -7,16 +7,19 @@ import time
 class repeated_backwards_astar():
 
      
-    def __init__(self, use_small_g):
+    def __init__(self, use_small_g, visualize, print_status, file_index):
         self.use_small_g = use_small_g
+        self.visualize = visualize
+        self.print_status = print_status
         self.m = Maze()
-        self.m.create_maze_dfs()
+        self.m.create_maze_from_file(file_index)
         self.cells_expanded = 0
         self.closed = set()
+        self.final_path = []
 
 
-    def new_maze(self):
-        self.m = self.m.create_maze_dfs()
+    def print_final_path(self):
+        self.m.print_final_maze(self.final_path)
 
     def compute_path(self, start_cell, open, counter):
         while start_cell.g > open.peek():
@@ -71,7 +74,8 @@ class repeated_backwards_astar():
             self.compute_path(start_cell, open, counter)
             
             if open.size() == 0:
-                #print("Cannot reach Target!")
+                if self.print_status:
+                    print("Cannot reach Target!")
                 return (time.time() - time_start), self.cells_expanded
 
             tree_pointer = start_cell
@@ -81,28 +85,21 @@ class repeated_backwards_astar():
                     tree_pointer.cost = math.inf
                     break
                 start_cell = tree_pointer
-                #update h value maybe
-            #tree_pointer = goal_cell
-            #backtrack = [] #Saves the Cells the tree pointers follow, used to update Agent's location
-            #while tree_pointer is not start_cell: #Follow pointers from goal -> start
-            #    backtrack.append(tree_pointer)
-            #    tree_pointer = tree_pointer.pointer
-            #
-            #backtrack.reverse() #Reverse list to follow it from start -> goal
-            #for cell in backtrack: #Update agent state until we hit a blocked cell
-            #    if cell.is_blocked:
-            #        #action_cost += 1
-            #        cell.cost = math.inf
-            #        break
-            #    start_cell = cell
-        #print("Target reached!")
+                self.update_all_h_values(start_cell)
+
+                #TODO: final path
+
+        if self.print_status:
+            print("Target reached!")
         return (time.time() - time_start), self.cells_expanded
-
-
 
     def compute_h_value(self, cell, start_cell):
         return abs(cell.x_pos - start_cell.x_pos) + abs(cell.y_pos - start_cell.y_pos)
 
+    def update_all_h_values(self, start_cell):
+        for row in self.m.maze:
+            for cell in row:
+                cell.h = self.compute_h_value(cell, start_cell)
 
     # adds all neighbors that havent been expanded yet (closed list)
     def find_valid_neighbors(self, curr_cell):
@@ -114,7 +111,6 @@ class repeated_backwards_astar():
                 if (i == 0 or j == 0) and i != j:
                     row += i
                     col += j
-                    #if (0 <= row < m.MAZE_SIZE and 0 <= col < m.MAZE_SIZE and not m.maze[row][col] in closed):
                     if (row >= 0 and row < self.m.MAZE_SIZE and col >= 0 and col < self.m.MAZE_SIZE and not self.m.maze[row][col] in self.closed):
                         neighbors.append(self.m.maze[row][col])
         return neighbors
