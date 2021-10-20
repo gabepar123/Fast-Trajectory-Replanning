@@ -10,7 +10,8 @@ class Heap:
         self.use_smallest_g = use_smallest_g
 
 
-    #True = c1 > c2
+    #True = c2 has the g value we want
+    # Inequality signs are a bit misleading here
     def compc(self, c1, c2):
         if (c1.f > c2.f): return True
         if (c1.f < c2.f): return False

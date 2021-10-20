@@ -3,6 +3,9 @@ from maze import *
 import math
 import random
 import time
+import matplotlib
+import matplotlib.pyplot as plt
+#from matplotlib.pyplot import figure, draw, pause
 
 class repeated_forward_astar():
 
@@ -14,11 +17,6 @@ class repeated_forward_astar():
         self.m.create_maze_from_file(file_index)
         self.cells_expanded = 0
         self.closed = set()
-        self.final_path = []
-
-
-    def print_final_path(self):
-        self.m.print_final_maze(self.final_path)
 
     def compute_path(self, goal_cell, open, counter):
         while goal_cell.g > open.peek():
@@ -45,6 +43,15 @@ class repeated_forward_astar():
         
 
     def run(self):
+        if self.visualize:
+            colors = 'gray gray blue red black white yellow'.split()
+            cmap = matplotlib.colors.ListedColormap(colors, name='colors', N=None)
+            plt.figure(figsize=(10,10))
+            self.m.update_int_maze(self.m.maze[self.m.agent_pos_x][self.m.agent_pos_y], [])
+            plt.imshow(self.m.int_maze, cmap=cmap)
+            plt.pause(1e-10)
+            
+
         time_start = time.time()
 
         counter = 0
@@ -75,6 +82,8 @@ class repeated_forward_astar():
             if open.size() == 0:
                 if self.print_status:
                     print("Cannot reach Target!")
+                if self.visualize:
+                    plt.show()
                 return (time.time() - time_start), self.cells_expanded
 
             tree_pointer = goal_cell
@@ -82,8 +91,9 @@ class repeated_forward_astar():
             while tree_pointer is not start_cell: #Follow pointers from goal -> start
                 backtrack.append(tree_pointer)
                 tree_pointer = tree_pointer.pointer
-            
-            
+
+            if self.visualize:
+                self.m.update_shortest_path(backtrack, start_cell)
 
             backtrack.reverse() #Reverse list to follow it from start -> goal
             for cell in backtrack: #Update agent state until we hit a blocked cell
@@ -91,10 +101,15 @@ class repeated_forward_astar():
                     cell.cost = math.inf
                     break
                 start_cell = cell
-                self.final_path.append(start_cell)
-                
+                if self.visualize:
+                    self.m.update_int_maze(start_cell, backtrack)
+                    plt.imshow(self.m.int_maze, cmap=cmap)
+                    plt.pause(1e-10)
+            
         if self.print_status:
             print("Target reached!")
+        if self.visualize:
+            plt.show()
         return (time.time() - time_start), self.cells_expanded
 
 

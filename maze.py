@@ -15,6 +15,7 @@ class Cell:
         self.search = 0
         self.pointer = None
         self.print_char = "-" #THIS IS ONLY FOR PRINTING THE MAZE
+        
 
 
 #
@@ -42,6 +43,18 @@ class Maze:
         #Agent starting pos = [0][0]
         self.agent_pos_x = 0
         self.agent_pos_y = 0
+
+        #used for visualization
+        self.int_maze = [[0 for j in range(self.MAZE_SIZE)] for i in range(self.MAZE_SIZE)]
+        self.previous_maze = self.int_maze.copy()
+        self.UNBLOCKED = 0
+        self.BLOCKED = 1
+        self.AGENT = 2
+        self.GOAL = 3
+        self.SEEN_BLOCKED = 4
+        self.SEEN_UNBLOCKED = 5
+        self.PATH = 6
+        #self.PATH_BLOCKED = 7
                     
                 
     def print_maze(self):
@@ -77,16 +90,22 @@ class Maze:
                 if c == "█":
                     cell.is_blocked = True
                     cell.print_char = "█"
+                    self.int_maze[i][j] = self.BLOCKED
                 elif c == "-":
                     cell.print_char = "-"
+                    self.int_maze[i][j] = self.UNBLOCKED
                 elif c == "A":
                     self.agent_pos_x = i
                     self.agent_pos_y = j
                     cell.print_char = "A"
+                    self.int_maze[i][j] = self.AGENT
                 elif c == "G":
                     self.GOAL_X = i
                     self.GOAL_Y = j
                     cell.print_char = "G"
+                    self.int_maze[i][j] = self.GOAL
+
+        self.previous_maze = self.int_maze
 
 
     # UNUSED:
@@ -142,6 +161,49 @@ class Maze:
             for j in range(85,100):
                 self.maze[i][j].is_blocked = False
                 self.maze[i][j].print_char = "-"
+
+    def update_int_maze(self, agent, backtrack):
+
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                row = agent.x_pos
+                col = agent.y_pos
+                if (i == 0 or j == 0) and i != j:
+                    row += i
+                    col += j
+                    if (row >= 0 and row < self.MAZE_SIZE and col >= 0 and col < self.MAZE_SIZE):
+                        if self.maze[row][col].is_blocked:
+                            self.int_maze[row][col] = self.SEEN_BLOCKED
+                        else:
+                            self.int_maze[row][col] = self.SEEN_UNBLOCKED
+
+        if agent.x_pos == 0 and agent.y_pos == 0:
+            self.int_maze[0][100] = self.PATH
+
+        self.int_maze[agent.x_pos][agent.y_pos] = self.AGENT
+        self.int_maze[self.GOAL_X][self.GOAL_Y] = self.GOAL
+    
+    def update_shortest_path(self, path, agent):
+
+        for row in range(0, self.MAZE_SIZE):
+            for col in range(0, self.MAZE_SIZE):
+                if self.int_maze[row][col] == self.PATH:
+                    self.int_maze[row][col] = self.BLOCKED
+
+        for cell in path:
+            self.int_maze[cell.x_pos][cell.y_pos] = self.PATH
+
+        self.int_maze[agent.x_pos][agent.y_pos] = self.AGENT
+        self.int_maze[self.GOAL_X][self.GOAL_Y] = self.GOAL
+
+
+
+        #self.previous_maze = self.int_maze
+        #for cell in backtrack:
+        #    if (cell.x_pos == self.agent_pos_x and cell.y_pos == self.agent_pos_y) or (cell.x_pos == self.GOAL_X and cell.y_pos == self.GOAL_Y):
+        #        continue
+        #    self.int_maze[cell.x_pos][cell.y_pos] = self.PATH
+
 
 
     
