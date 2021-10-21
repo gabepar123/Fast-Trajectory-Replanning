@@ -87,9 +87,9 @@ class Maze:
                 c = f.read(1)
                 if c == "\n":
                     c = f.read(1)
-                if c == "█":
+                if c == "x":
                     cell.is_blocked = True
-                    cell.print_char = "█"
+                    cell.print_char = "x"
                     self.int_maze[i][j] = self.BLOCKED
                 elif c == "-":
                     cell.print_char = "-"
@@ -110,7 +110,7 @@ class Maze:
     # UNUSED:
     # Creates grid world using stack DFS
     # Marking the index as "-" corresponds to UNBLOCKED, only for printing
-    # Marking the index as "█" corresponds to BLOCKED, only for printing
+    # Marking the index as "x" corresponds to BLOCKED, only for printing
     # "A" is the Agent's position
     # "G" is the goal index
 
@@ -149,7 +149,7 @@ class Maze:
                 
             else:
                 self.maze[row][col].is_blocked = True
-                self.maze[row][col].print_char = "█"
+                self.maze[row][col].print_char = "x"
 
         #clear out area near goal and agent to reduce chance of it being closed off
         for i in range(0,10):

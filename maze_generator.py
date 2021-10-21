@@ -4,7 +4,7 @@ class Maze_Gen:
 
     def __init__(self):
         self.MAZE_SIZE = 101
-        self.maze = [["█" for j in range(self.MAZE_SIZE)] for i in range(self.MAZE_SIZE)]
+        self.maze = [["x" for j in range(self.MAZE_SIZE)] for i in range(self.MAZE_SIZE)]
         self.agent_pos_x = 0
         self.agent_pos_y = 0
         self.goal_x = 100
@@ -21,17 +21,17 @@ class Maze_Gen:
             x = c[2]
             y = c[3]
 
-            if (self.maze[x][y] == "█"):
+            if (self.maze[x][y] == "x"):
                 self.maze[c[0]][c[1]] = "-"
                 self.maze[x][y] = "-"
 
-                if x >= 2 and self.maze[x-2][y] == "█":
+                if x >= 2 and self.maze[x-2][y] == "x":
                     list.append([x-1, y, x-2, y])
-                if y >= 2 and self.maze[x][y-2] == "█":
+                if y >= 2 and self.maze[x][y-2] == "x":
                     list.append([x, y-1, x, y-2])
-                if x < self.MAZE_SIZE - 2 and self.maze[x+2][y] == "█":
+                if x < self.MAZE_SIZE - 2 and self.maze[x+2][y] == "x":
                     list.append([x+1, y, x+2, y])
-                if y < self.MAZE_SIZE - 2 and self.maze[x][y+2] == "█":
+                if y < self.MAZE_SIZE - 2 and self.maze[x][y+2] == "x":
                     list.append([x, y+1, x, y+2])
             
             self.goal_x = x
@@ -40,7 +40,7 @@ class Maze_Gen:
         for i, row in enumerate(self.maze):
             for j, col in enumerate(row):
                 rand = random.random()
-                if self.maze[i][j] == "█" and rand < 0.25:
+                if self.maze[i][j] == "x" and rand < 0.25:
                     self.maze[i][j] = "-"
 
         self.maze[self.goal_x][self.goal_y] = "G"

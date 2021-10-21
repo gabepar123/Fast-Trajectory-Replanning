@@ -1,7 +1,6 @@
 from min_heap import *
 from maze import *
 import math
-import random
 import time
 import matplotlib
 import matplotlib.pyplot as plt
@@ -134,7 +133,7 @@ class adaptive_astar():
         return neighbors
 
     def initialize_gui(self):
-        plt.figure(figsize=(10,10))
+        plt.figure(figsize=(9,9))
         self.m.update_int_maze(self.m.maze[self.m.agent_pos_x][self.m.agent_pos_y])
         self.update_gui()
 
