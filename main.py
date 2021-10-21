@@ -104,7 +104,7 @@ if __name__ == '__main__':
             rfa.run()
             
         elif user_input == '2':
-            aa = adaptive_astar(use_small_g=False, visualize=True, print_status=True, file_index=0) #TODO: get nice grid world
+            aa = adaptive_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) #TODO: get nice grid world
             aa.run()
         
         elif user_input == '3':
