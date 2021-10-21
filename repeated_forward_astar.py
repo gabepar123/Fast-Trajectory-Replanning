@@ -5,7 +5,6 @@ import random
 import time
 import matplotlib
 import matplotlib.pyplot as plt
-#from matplotlib.pyplot import figure, draw, pause
 
 class repeated_forward_astar():
 
@@ -17,6 +16,10 @@ class repeated_forward_astar():
         self.m.create_maze_from_file(file_index)
         self.cells_expanded = 0
         self.closed = set()
+        if self.visualize:
+            self.colors = 'lightgray gray blue red black white yellow'.split()
+            self.cmap = matplotlib.colors.ListedColormap(self.colors, name='colors', N=None)
+            self.UPDATE_SPEED = 1e-10 #for GUI
 
     def compute_path(self, goal_cell, open, counter):
         while goal_cell.g > open.peek():
@@ -40,17 +43,9 @@ class repeated_forward_astar():
                     open.insert(succ)
             if open.size() == 0: return
         
-        
-
     def run(self):
         if self.visualize:
-            colors = 'gray gray blue red black white yellow'.split()
-            cmap = matplotlib.colors.ListedColormap(colors, name='colors', N=None)
-            plt.figure(figsize=(10,10))
-            self.m.update_int_maze(self.m.maze[self.m.agent_pos_x][self.m.agent_pos_y], [])
-            plt.imshow(self.m.int_maze, cmap=cmap)
-            plt.pause(1e-10)
-            
+            self.initialize_gui()
 
         time_start = time.time()
 
@@ -91,32 +86,31 @@ class repeated_forward_astar():
             while tree_pointer is not start_cell: #Follow pointers from goal -> start
                 backtrack.append(tree_pointer)
                 tree_pointer = tree_pointer.pointer
-
+               
             if self.visualize:
                 self.m.update_shortest_path(backtrack, start_cell)
 
             backtrack.reverse() #Reverse list to follow it from start -> goal
             for cell in backtrack: #Update agent state until we hit a blocked cell
+                if self.visualize:
+                    self.m.update_int_maze(start_cell)
+                    self.update_gui()
+
                 if cell.is_blocked:
                     cell.cost = math.inf
                     break
                 start_cell = cell
-                if self.visualize:
-                    self.m.update_int_maze(start_cell, backtrack)
-                    plt.imshow(self.m.int_maze, cmap=cmap)
-                    plt.pause(1e-10)
             
         if self.print_status:
             print("Target reached!")
+        
         if self.visualize:
             plt.show()
+
         return (time.time() - time_start), self.cells_expanded
-
-
 
     def compute_h_value(self, cell):
         return abs(cell.x_pos - self.m.GOAL_X) + abs(cell.y_pos - self.m.GOAL_Y)
-
 
     # adds all neighbors that havent been expanded yet (closed list)
     def find_valid_neighbors(self, curr_cell):
@@ -132,3 +126,12 @@ class repeated_forward_astar():
                         neighbors.append(self.m.maze[row][col])
         return neighbors
         
+    def initialize_gui(self):
+        plt.figure(figsize=(10,10))
+        self.m.update_int_maze(self.m.maze[self.m.agent_pos_x][self.m.agent_pos_y])
+        self.update_gui()
+
+    def update_gui(self):
+        plt.cla()
+        plt.imshow(self.m.int_maze, cmap=self.cmap)
+        plt.pause(self.UPDATE_SPEED)

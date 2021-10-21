@@ -46,10 +46,6 @@ class Maze_Gen:
         self.maze[self.goal_x][self.goal_y] = "G"
         self.maze[self.agent_pos_x][self.agent_pos_y] = "A"
 
-        
-
-
-                
     def print_maze(self):
         for row in self.maze:
             print("", end ="")

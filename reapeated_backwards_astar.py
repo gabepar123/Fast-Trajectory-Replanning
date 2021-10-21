@@ -3,10 +3,12 @@ from maze import *
 import math
 import random
 import time
+import matplotlib
+import matplotlib.pyplot as plt
+
 
 class repeated_backwards_astar():
 
-     
     def __init__(self, use_small_g, visualize, print_status, file_index):
         self.use_small_g = use_small_g
         self.visualize = visualize
@@ -16,6 +18,10 @@ class repeated_backwards_astar():
         self.cells_expanded = 0
         self.closed = set()
         self.final_path = []
+        if self.visualize:
+            self.colors = 'lightgray gray blue red black white yellow'.split()
+            self.cmap = matplotlib.colors.ListedColormap(self.colors, name='colors', N=None)
+            self.UPDATE_SPEED = 1e-10 #for GUI
 
 
     def print_final_path(self):
@@ -46,6 +52,9 @@ class repeated_backwards_astar():
         
 
     def run(self):
+        if self.visualize:
+            self.initialize_gui()
+
         time_start = time.time()
 
         counter = 0
@@ -76,10 +85,23 @@ class repeated_backwards_astar():
             if open.size() == 0:
                 if self.print_status:
                     print("Cannot reach Target!")
+                if self.visualize:
+                    plt.show()
                 return (time.time() - time_start), self.cells_expanded
+
+            if self.visualize:
+                backtrack = []  
+                tree_pointer = start_cell
+                while tree_pointer is not goal_cell:
+                    backtrack.append(tree_pointer)
+                    tree_pointer = tree_pointer.pointer
+                self.m.update_shortest_path(backtrack, start_cell)
 
             tree_pointer = start_cell
             while tree_pointer is not goal_cell:
+                if self.visualize:
+                    self.m.update_int_maze(start_cell)
+                    self.update_gui()
                 tree_pointer = tree_pointer.pointer
                 if tree_pointer.is_blocked:
                     tree_pointer.cost = math.inf
@@ -87,10 +109,12 @@ class repeated_backwards_astar():
                 start_cell = tree_pointer
                 self.update_all_h_values(start_cell)
 
-                #TODO: final path
-
         if self.print_status:
             print("Target reached!")
+
+        if self.visualize:
+            plt.show()
+
         return (time.time() - time_start), self.cells_expanded
 
     def compute_h_value(self, cell, start_cell):
@@ -115,3 +139,12 @@ class repeated_backwards_astar():
                         neighbors.append(self.m.maze[row][col])
         return neighbors
         
+    def initialize_gui(self):
+        plt.figure(figsize=(10,10))
+        self.m.update_int_maze(self.m.maze[self.m.agent_pos_x][self.m.agent_pos_y])
+        self.update_gui()
+
+    def update_gui(self):
+        plt.cla()
+        plt.imshow(self.m.int_maze, cmap=self.cmap)
+        plt.pause(self.UPDATE_SPEED)

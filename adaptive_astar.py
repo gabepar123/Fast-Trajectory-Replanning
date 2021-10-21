@@ -3,10 +3,11 @@ from maze import *
 import math
 import random
 import time
+import matplotlib
+import matplotlib.pyplot as plt
 
 class adaptive_astar():
 
-     
     def __init__(self, use_small_g, visualize, print_status, file_index):
         self.use_small_g = use_small_g
         self.visualize = visualize
@@ -15,8 +16,11 @@ class adaptive_astar():
         self.m.create_maze_from_file(file_index)
         self.cells_expanded = 0
         self.closed = set()
-        self.final_path = []
-    
+        if self.visualize:
+            self.colors = 'lightgray gray blue red black white yellow'.split()
+            self.cmap = matplotlib.colors.ListedColormap(self.colors, name='colors', N=None)
+            self.UPDATE_SPEED = 1e-10 #for GUI
+
     def print_final_path(self):
         self.m.print_final_maze(self.final_path)
 
@@ -42,9 +46,10 @@ class adaptive_astar():
                     open.insert(succ)
             if open.size() == 0: return
         
-        
-
     def run(self):
+        if self.visualize:
+            self.initialize_gui()
+
         time_start = time.time()
 
         counter = 0
@@ -76,10 +81,11 @@ class adaptive_astar():
                 cell.h = goal_cell.g - cell.h #adaptive a*
                 cell.f = cell.g + cell.h
             
-            
             if open.size() == 0:
                 if self.print_status:
                     print("Cannot reach Target!")
+                if self.visualize:
+                    plt.show()
                 return (time.time() - time_start), self.cells_expanded
 
             tree_pointer = goal_cell
@@ -88,25 +94,30 @@ class adaptive_astar():
                 backtrack.append(tree_pointer)
                 tree_pointer = tree_pointer.pointer
 
-            
+            if self.visualize:
+                self.m.update_shortest_path(backtrack, start_cell)
 
             backtrack.reverse() #Reverse list to follow it from start -> goal
             for cell in backtrack: #Update agent state until we hit a blocked cell
+                if self.visualize:
+                    self.m.update_int_maze(start_cell)
+                    self.update_gui()
+                
                 if cell.is_blocked:
                     cell.cost = math.inf
                     break
                 start_cell = cell
-                self.final_path.append(start_cell)
 
         if self.print_status:
             print("Target reached!")
+
+        if self.visualize:
+            plt.show()
+
         return (time.time() - time_start), self.cells_expanded
-
-
 
     def compute_h_value(self, cell):
         return abs(cell.x_pos - self.m.GOAL_X) + abs(cell.y_pos - self.m.GOAL_Y)
-
 
     # adds all neighbors that havent been expanded yet (closed list)
     def find_valid_neighbors(self, curr_cell):
@@ -121,4 +132,13 @@ class adaptive_astar():
                     if (row >= 0 and row < self.m.MAZE_SIZE and col >= 0 and col < self.m.MAZE_SIZE and not self.m.maze[row][col] in self.closed):
                         neighbors.append(self.m.maze[row][col])
         return neighbors
-        
+
+    def initialize_gui(self):
+        plt.figure(figsize=(10,10))
+        self.m.update_int_maze(self.m.maze[self.m.agent_pos_x][self.m.agent_pos_y])
+        self.update_gui()
+
+    def update_gui(self):
+        plt.cla()
+        plt.imshow(self.m.int_maze, cmap=self.cmap)
+        plt.pause(self.UPDATE_SPEED)

@@ -91,26 +91,26 @@ def small_vs_large():
 
 
 if __name__ == '__main__':
-    
+
     while True:
-        user_input = input("""1) Visualize Repeated Forward A*\n
-2) Visualize Adaptive A*\n
-3) Visualize Backwards Repeated A*\n
-4) Compare Repeated Forward A* vs Adaptive A*\n
+        user_input = input("""1) Visualize Repeated Forward A*      2) Visualize Adaptive A*\n
+3) Visualize Backwards Repeated A*    4) Compare Repeated Forward A* vs Adaptive A*\n
 5) Compare Repeated Forward A* vs Repeated Backwards A* (WARNING: Takes up to 6 minutes)\n
 6) Compare Smaller G Value vs Bigger G Value (WARNING: Takes up to 6 minutes)\n
 7) Quit\n """)
         
         if user_input == '1':
-            rfa = repeated_forward_astar(use_small_g=False, visualize=True, print_status=False, file_index=1) #TODO: get nice grid world
+            rfa = repeated_forward_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) #TODO: get nice grid world
             rfa.run()
+            
         elif user_input == '2':
-            rba = repeated_backwards_astar(use_small_g=False, visualize=True, print_status=False, file_index=1) #TODO: get nice grid world
-            rba.run()
-        elif user_input == '3':
-            aa = adaptive_astar(use_small_g=False, visualize=True, print_status=False, file_index=1) #TODO: get nice grid world
+            aa = adaptive_astar(use_small_g=False, visualize=True, print_status=True, file_index=0) #TODO: get nice grid world
             aa.run()
-            time, cells_expanded = aa.run()
+        
+        elif user_input == '3':
+            rba = repeated_backwards_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) #TODO: get nice grid world
+            rba.run()
+
         elif user_input == '4':
             forward_vs_adaptive()
         elif user_input == '5':
@@ -121,3 +121,4 @@ if __name__ == '__main__':
             break
         else:
             print("Invalid Input!")
+        print("\n")
