@@ -5,9 +5,6 @@ from adaptive_astar import *
 from maze_generator import *
 import time
 
-
-#TODO: visualize properly
-
 def forward_vs_adaptive():
 
     total_time = 0
@@ -97,18 +94,18 @@ if __name__ == '__main__':
 3) Visualize Backwards Repeated A*    4) Compare Repeated Forward A* vs Adaptive A*\n
 5) Compare Repeated Forward A* vs Repeated Backwards A* (WARNING: Takes up to 6 minutes)\n
 6) Compare Smaller G Value vs Bigger G Value (WARNING: Takes up to 6 minutes)\n
-7) Quit\n """)
+7) Quit\nFOR FUN: ENTER x TO SOLVE A PERFECT MAZE\n""")
         
         if user_input == '1':
-            rfa = repeated_forward_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) #TODO: get nice grid world
+            rfa = repeated_forward_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) 
             rfa.run()
             
         elif user_input == '2':
-            aa = adaptive_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) #TODO: get nice grid world
+            aa = adaptive_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) 
             aa.run()
         
         elif user_input == '3':
-            rba = repeated_backwards_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) #TODO: get nice grid world
+            rba = repeated_backwards_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) 
             rba.run()
 
         elif user_input == '4':
@@ -119,6 +116,9 @@ if __name__ == '__main__':
             small_vs_large()
         elif user_input == '7':
             break
+        elif user_input == 'x':
+            aa = adaptive_astar(use_small_g=False, visualize=True, print_status=True, file_index=777) #Perfect maze
+            aa.run()
         else:
             print("Invalid Input!")
         print("\n")

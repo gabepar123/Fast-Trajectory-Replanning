@@ -36,7 +36,7 @@ class Heap:
             parent = self.heap[p]
             if self.compc(parent, data):
             # if 10*(data.f - data.g) < 10*(parent.f - parent.g)
-            #if data.f < parent.f: #TODO:
+            #if data.f < parent.f:
                 temp = parent
                 self.heap[p] = data
                 self.heap[curr] = parent
@@ -69,10 +69,10 @@ class Heap:
             i = k + 1
             if i < len(self.heap):
                 if self.compc(self.heap[k], self.heap[i]):
-                #if self.heap[i].f < self.heap[k].f: #TODO:
+                #if self.heap[i].f < self.heap[k].f:
                     max += 1
             if self.compc(self.heap[j], self.heap[max]):
-            #if (self.heap[j].f > self.heap[max].f): #TODO:
+            #if (self.heap[j].f > self.heap[max].f):
                 temp = self.heap[j]
                 self.heap[j] = self.heap[max]
                 self.heap[max] = temp
