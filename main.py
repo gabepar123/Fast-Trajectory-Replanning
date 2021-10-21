@@ -94,7 +94,7 @@ if __name__ == '__main__':
 3) Visualize Backwards Repeated A*    4) Compare Repeated Forward A* vs Adaptive A*\n
 5) Compare Repeated Forward A* vs Repeated Backwards A* (WARNING: Takes up to 6 minutes)\n
 6) Compare Smaller G Value vs Bigger G Value (WARNING: Takes up to 6 minutes)\n
-7) Quit\nFOR FUN: ENTER x TO SOLVE A PERFECT MAZE\n""")
+7) Quit\nFOR FUN: ENTER x TO SOLVE A PERFECT MAZE (Exactly One Path)\n""")
         
         if user_input == '1':
             rfa = repeated_forward_astar(use_small_g=False, visualize=True, print_status=True, file_index=1) 
