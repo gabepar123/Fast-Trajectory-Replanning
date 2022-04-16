@@ -1,3 +1,2 @@
 # Fast-Trajectory-Replanning
-
-# Maze solver using A* 
+ Maze solver using A* 
